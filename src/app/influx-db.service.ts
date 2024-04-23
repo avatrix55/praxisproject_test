@@ -19,6 +19,22 @@ export class InfluxDBService {
 
   // Example method to query data
   public async queryData(fluxQuery: string): Promise<any> {
-    // Implement query logic here
+    // Implement query logic here    const results: any[] = [];
+    const results: any[] = [];
+    return new Promise((resolve, reject) => {
+      this.queryApi.queryRows(fluxQuery, {
+        next(row, tableMeta) {
+          const o = tableMeta.toObject(row);
+          results.push(o);
+        },
+        error(error) {
+          console.error('Query error:', error);
+          reject(error);
+        },
+        complete() {
+          resolve(results);
+        },
+      });
+    });
   }
 }
